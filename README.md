@@ -111,3 +111,7 @@ Variables opcionales: `ARTEC_DB` (ruta a la base), `ARTEC_ADMIN_PASSWORD` (solo 
 ## Repositorio
 
 El repositorio contiene el código y las pruebas. La base de datos, los respaldos, los secretos y las notas locales de instalación están excluidos mediante `.gitignore`. Cada instalación crea su propia base de datos. Publicar el código en GitHub no despliega la aplicación ni copia sus registros.
+
+## Copia inicial de datos
+
+Se incluye una copia de migración autorizada y sin credenciales en `migration/`, separada de la base activa. Consulta [las instrucciones de restauración manual](migration/README.md). Mantén la base de producción fuera del repositorio mediante `ARTEC_DB`; las actualizaciones de Git no la reemplazan.

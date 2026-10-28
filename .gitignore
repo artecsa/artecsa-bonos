@@ -16,3 +16,6 @@ __pycache__/
 *.log
 # Notas locales de instalación (contienen rutas del equipo)
 /ACTUALIZACION-*.txt
+
+# Copia inicial autorizada, sin credenciales; nunca base activa
+!/migration/artec-inicial-2026-10-28.sqlite3

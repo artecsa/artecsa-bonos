@@ -1,0 +1,15 @@
+{
+  "snapshot": "artec-inicial-2026-10-28.sqlite3",
+  "date": "2026-10-28",
+  "sha256": "f80779e8f828ecdb0d9802dff55b4ab173d8a978b88062dc1b5dc9ee49b2724a",
+  "counts": {
+    "clients": 11,
+    "workers": 7,
+    "rates": 21,
+    "elevators": 14,
+    "payments": 2,
+    "audit": 102
+  },
+  "credentials_removed": true,
+  "automatic_restore": false
+}
