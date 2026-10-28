@@ -1,0 +1,18 @@
+# Datos y respaldos locales: nunca publicar
+/data/
+/respaldos/
+*.sqlite3*
+*.db
+*.db-*
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Archivos generados
+__pycache__/
+*.py[cod]
+.DS_Store
+*.log
+# Notas locales de instalación (contienen rutas del equipo)
+/ACTUALIZACION-*.txt

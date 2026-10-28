@@ -1,0 +1,36 @@
+test_all_types_and_tasks (test_artec.ArtecTests.test_all_types_and_tasks) ... ok
+test_approval_freezes_rates (test_artec.ArtecTests.test_approval_freezes_rates) ... ok
+test_approval_rejects_stale_tariff (test_artec.ArtecTests.test_approval_rejects_stale_tariff) ... ok
+test_client_edit_preserves_links_and_audits (test_artec.ArtecTests.test_client_edit_preserves_links_and_audits) ... ok
+test_concurrent_payment_overdraft (test_artec.ArtecTests.test_concurrent_payment_overdraft) ... ok
+test_csrf_and_origin (test_artec.ArtecTests.test_csrf_and_origin) ... ok
+test_csv_formula_injection_and_audit (test_artec.ArtecTests.test_csv_formula_injection_and_audit) ... ok
+test_database_persists_with_new_connection (test_artec.ArtecTests.test_database_persists_with_new_connection) ... ok
+test_date_validation (test_artec.ArtecTests.test_date_validation) ... ok
+test_delete_draft_permissions_and_history (test_artec.ArtecTests.test_delete_draft_permissions_and_history) ... ok
+test_delete_requires_confirmation_and_current_version (test_artec.ArtecTests.test_delete_requires_confirmation_and_current_version) ... ok
+test_delete_with_payments_requires_void_and_keeps_history (test_artec.ArtecTests.test_delete_with_payments_requires_void_and_keeps_history) ... ok
+test_disable_user_revokes_session (test_artec.ArtecTests.test_disable_user_revokes_session) ... ok
+test_duplicate_payment_retry (test_artec.ArtecTests.test_duplicate_payment_retry) ... ok
+test_duplicate_worker_and_inactive (test_artec.ArtecTests.test_duplicate_worker_and_inactive) ... ok
+test_empty_tasks_excluded_and_cent_conservation (test_artec.ArtecTests.test_empty_tasks_excluded_and_cent_conservation) ... ok
+test_integer_amounts_and_assistant (test_artec.ArtecTests.test_integer_amounts_and_assistant) ... ok
+test_last_admin_protected (test_artec.ArtecTests.test_last_admin_protected) ... ok
+test_login_throttle (test_artec.ArtecTests.test_login_throttle) ... ok
+test_migration_preserves_approved_and_adds_assistant (test_artec.ArtecTests.test_migration_preserves_approved_and_adds_assistant) ... ok
+test_multiple_payments_and_balance (test_artec.ArtecTests.test_multiple_payments_and_balance) ... ok
+test_no_password_or_session_leak (test_artec.ArtecTests.test_no_password_or_session_leak) ... ok
+test_payment_restrictions (test_artec.ArtecTests.test_payment_restrictions) ... ok
+test_percent_validation (test_artec.ArtecTests.test_percent_validation) ... ok
+test_reference_format (test_artec.ArtecTests.test_reference_format) ... ok
+test_roles_server_enforced (test_artec.ArtecTests.test_roles_server_enforced) ... ok
+test_stale_version (test_artec.ArtecTests.test_stale_version) ... ok
+test_supervision_single (test_artec.ArtecTests.test_supervision_single) ... ok
+test_unauthenticated_and_static (test_artec.ArtecTests.test_unauthenticated_and_static) ... ok
+test_void_keeps_audit_and_restores_balance (test_artec.ArtecTests.test_void_keeps_audit_and_restores_balance) ... ok
+test_zero_tariff_and_empty_approval_rejected (test_artec.ArtecTests.test_zero_tariff_and_empty_approval_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 1.339s
+
+OK
