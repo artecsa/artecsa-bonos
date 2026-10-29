@@ -4,3 +4,6 @@
 .rate-total{text-align:right;white-space:nowrap}.rate-total small{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}.rate-total strong{font-size:23px;font-variant-numeric:tabular-nums}
 input[type=number]{appearance:textfield;-moz-appearance:textfield}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .rate-row{grid-template-columns:minmax(0,1fr) 140px}.rate-input input{width:105px}.rate-grid .card-head{padding:20px 18px}.rate-grid .pad{padding:18px}
+
+/* Original Artecsa logo, preserving its proportions. */
+.sidebar-brand{width:100%;margin:0 0 12px}.sidebar-brand img{display:block;width:100%;height:auto;max-width:195px}.sidebar .brand-sub{margin-top:0}@media(max-width:760px){.sidebar-brand{max-width:175px;margin-bottom:0}}
