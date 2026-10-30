@@ -1,4 +1,4 @@
-const CACHE='artec-shell-v1.5-login-logo';
+const CACHE='artec-shell-v1.6-login-brand';
 const FILES=['/offline.html','/style.css','/icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
