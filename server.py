@@ -42,6 +42,7 @@ def init():
         CREATE TABLE IF NOT EXISTS attempts(key TEXT PRIMARY KEY,count INTEGER NOT NULL,until REAL NOT NULL);
         CREATE TABLE IF NOT EXISTS workers(id INTEGER PRIMARY KEY,name TEXT NOT NULL,active INTEGER NOT NULL DEFAULT 1);
         CREATE TABLE IF NOT EXISTS clients(id INTEGER PRIMARY KEY,name TEXT NOT NULL,contact TEXT NOT NULL DEFAULT '',created_at TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_descriptions(task TEXT PRIMARY KEY,description TEXT NOT NULL DEFAULT '');
         CREATE TABLE IF NOT EXISTS rates(type TEXT NOT NULL,task TEXT NOT NULL,cents INTEGER NOT NULL CHECK(cents>=0),PRIMARY KEY(type,task));
         CREATE TABLE IF NOT EXISTS elevators(id INTEGER PRIMARY KEY,client_id INTEGER NOT NULL REFERENCES clients(id),reference TEXT UNIQUE NOT NULL,type TEXT NOT NULL,registered_on TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'borrador',assignments TEXT NOT NULL,settlement TEXT,approved_by INTEGER REFERENCES users(id),approved_at TEXT,version INTEGER NOT NULL DEFAULT 1);
         CREATE TABLE IF NOT EXISTS payments(id INTEGER PRIMARY KEY,elevator_id INTEGER NOT NULL REFERENCES elevators(id),worker_id INTEGER NOT NULL REFERENCES workers(id),paid_on TEXT NOT NULL,cents INTEGER NOT NULL CHECK(cents>0),note TEXT NOT NULL,request_key TEXT UNIQUE NOT NULL,created_by INTEGER NOT NULL REFERENCES users(id),created_at TEXT NOT NULL,voided_at TEXT,void_reason TEXT);
@@ -55,6 +56,7 @@ def init():
         if not db.execute('SELECT 1 FROM workers').fetchone():
             db.executemany('INSERT INTO workers(name) VALUES(?)',[(f'Trabajador {i}',) for i in range(1,7)])
         db.executemany('INSERT OR IGNORE INTO rates VALUES(?,?,0)',[(t,k) for t in TYPES for k in TASKS])
+        db.executemany('INSERT OR IGNORE INTO task_descriptions(task) VALUES(?)',[(task,) for task in TASKS])
         # Add the new task without changing approved amounts or existing tariffs.
         for e in db.execute('SELECT id,assignments FROM elevators').fetchall():
             assignments=json.loads(e['assignments'])
@@ -126,7 +128,7 @@ def enrich(db,e):
     e['pending_cents']=e['calculation']['total_cents']-e['paid_cents']; return e
 
 def state(db,u):
-    result={'user':u,'tasks':TASKS,'types':TYPES}
+    result={'user':u,'tasks':TASKS,'types':TYPES,'task_descriptions':dict(db.execute('SELECT task,description FROM task_descriptions'))}
     for name in ['workers','clients','rates','payments']:
         result[name]=[dict(r) for r in db.execute(f'SELECT * FROM {name}')]
     for payment in result['payments']:
@@ -158,6 +160,14 @@ def mutate(db,u,path,b):
             before=row(db,'workers',b['id']); id=before['id']; db.execute('UPDATE workers SET name=?,active=? WHERE id=?',(name,active,id))
         else: id=db.execute('INSERT INTO workers(name,active) VALUES(?,?)',(name,active)).lastrowid
         audit(db,u,'guardar','trabajadores',id,before,{'name':name,'active':active}); return {'id':id}
+    if path=='/api/task-descriptions':
+        permission(u,'administrador'); task=b.get('task'); need(task in TASKS,'Tarea inválida.')
+        description=b.get('description'); need(isinstance(description,str) and len(description)<=1000,'La descripción debe tener como máximo 1000 caracteres.')
+        old=db.execute('SELECT description FROM task_descriptions WHERE task=?',(task,)).fetchone()[0]
+        need(b.get('previous')==old,'Otro usuario modificó la descripción. Recargue antes de guardar.',409)
+        description=description.strip()
+        db.execute('UPDATE task_descriptions SET description=? WHERE task=?',(description,task))
+        audit(db,u,'editar descripción','tareas',task,{'description':old},{'description':description}); return {}
     if path=='/api/rates':
         permission(u,'administrador'); need(b.get('type') in TYPES and b.get('task') in TASKS,'Tarifa inválida.')
         cents=money(b.get('amount')); old=dict(db.execute('SELECT * FROM rates WHERE type=? AND task=?',(b['type'],b['task'])).fetchone())

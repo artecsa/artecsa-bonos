@@ -52,6 +52,24 @@ class ArtecTests(unittest.TestCase):
         a={t:[] for t in app.TASKS}; a['Asistente']=[{'worker_id':3,'percent':100}]
         id=self.draft(a)[1]['id']; self.assertEqual(self.approve(id)[0],200)
         self.assertEqual(self.state()['elevators'][0]['calculation']['workers'],{'3':2500})
+    def test_task_descriptions_permissions_validation_and_conflict(self):
+        task='Fabricación'; old=self.state()['task_descriptions'][task]
+        body={'task':task,'description':'Corte y preparación de piezas.','previous':old}
+        for auth in [self.supervisor,self.viewer]:
+            self.assertEqual(self.request('/api/task-descriptions',body,auth)[0],403)
+        self.assertEqual(self.request('/api/task-descriptions',body)[0],401)
+        for invalid in [None,42,'x'*1001]:
+            self.assertEqual(self.request('/api/task-descriptions',{**body,'description':invalid},self.admin)[0],400)
+        self.assertEqual(self.request('/api/task-descriptions',{**body,'task':'No existe'},self.admin)[0],400)
+        self.assertEqual(self.request('/api/task-descriptions',body,self.admin)[0],200)
+        self.assertEqual(self.request('/api/task-descriptions',{**body,'previous':'desactualizado'},self.admin)[0],409)
+        for auth in [self.admin,self.supervisor,self.viewer]:
+            self.assertEqual(self.request('/api/state',auth=auth)[1]['task_descriptions'][task],body['description'])
+        app.init()
+        self.assertEqual(self.state()['task_descriptions'][task],body['description'])
+        self.assertTrue(any(a['entity']=='tareas' and a['entity_id']==task for a in self.state()['audit']))
+        self.assertEqual(self.request('/api/task-descriptions',{'task':task,'description':'','previous':body['description']},self.admin)[0],200)
+        self.assertEqual(self.state()['task_descriptions'][task],'')
     def test_reference_format(self):
         for ref in ['PR','PR-','1234','PR1234','PR-123','PR-12345','pr-1234','PR-12a4']:
             self.assertEqual(self.draft(reference=ref)[0],400)
