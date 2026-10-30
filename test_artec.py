@@ -31,7 +31,7 @@ class ArtecTests(unittest.TestCase):
         with app.connect() as db:
             db.execute('DELETE FROM payments'); db.execute('DELETE FROM elevators'); db.execute('DELETE FROM clients'); db.execute('UPDATE rates SET cents=10100'); db.execute('UPDATE workers SET active=1')
         self.client=self.request('/api/clients',{'name':'Cliente Prueba'},self.admin)[1]['id']
-    def draft(self,assignments=None,reference='PR0001'):
+    def draft(self,assignments=None,reference='PR-0001'):
         a={t:[] for t in app.TASKS}; a['Fabricación']=[{'worker_id':1,'percent':50},{'worker_id':2,'percent':50}]
         if assignments is not None: a=assignments
         return self.request('/api/elevators',{'client_id':self.client,'reference':reference,'type':'Cabina alta','registered_on':'2026-10-26','assignments':a},self.supervisor)
@@ -53,9 +53,9 @@ class ArtecTests(unittest.TestCase):
         id=self.draft(a)[1]['id']; self.assertEqual(self.approve(id)[0],200)
         self.assertEqual(self.state()['elevators'][0]['calculation']['workers'],{'3':2500})
     def test_reference_format(self):
-        for ref in ['PR','1234','PR123','PR12345','pr1234','PR12a4']:
+        for ref in ['PR','PR-','1234','PR1234','PR-123','PR-12345','pr-1234','PR-12a4']:
             self.assertEqual(self.draft(reference=ref)[0],400)
-        self.assertEqual(self.draft(reference='PR0007')[0],200)
+        self.assertEqual(self.draft(reference='PR-0007')[0],200)
     def test_client_edit_preserves_links_and_audits(self):
         self.draft(); old=next(c for c in self.state()['clients'] if c['id']==self.client)
         body={'id':self.client,'name':'Cliente editado','contact':'Contacto','previous':{'name':old['name'],'contact':old['contact']}}
@@ -87,11 +87,11 @@ class ArtecTests(unittest.TestCase):
         self.assertEqual(self.delete(id)[0],200)
         self.assertEqual(self.state()['elevators'],[])
         self.assertEqual(self.state()['audit'][0]['action'],'eliminar')
-        self.assertNotIn('PR0001',self.request('/api/export',auth=self.admin)[1])
+        self.assertNotIn('PR-0001',self.request('/api/export',auth=self.admin)[1])
         self.assertEqual(self.delete(id)[0],409)
     def test_delete_requires_confirmation_and_current_version(self):
         id=self.draft()[1]['id']
-        for body,expected in [({'reference':'wrong','version':1,'reason':'Error'},400),({'reference':'PR0001','version':0,'reason':'Error'},409),({'reference':'PR0001','version':1,'reason':''},400)]:
+        for body,expected in [({'reference':'wrong','version':1,'reason':'Error'},400),({'reference':'PR-0001','version':0,'reason':'Error'},409),({'reference':'PR-0001','version':1,'reason':''},400)]:
             self.assertEqual(self.request('/api/delete-elevator',{'id':id,**body},self.admin)[0],expected)
         self.assertEqual(len(self.state()['elevators']),1)
     def test_delete_with_payments_requires_void_and_keeps_history(self):
@@ -100,7 +100,7 @@ class ArtecTests(unittest.TestCase):
         self.request('/api/void-payment',{'id':payment,'reason':'Duplicado'},self.admin)
         self.assertEqual(self.delete(id)[0],200)
         state=self.state(); self.assertEqual(state['elevators'],[])
-        self.assertEqual(state['payments'][0]['elevator_reference'],'PR0001')
+        self.assertEqual(state['payments'][0]['elevator_reference'],'PR-0001')
         self.assertTrue(state['payments'][0]['voided_at'])
         self.assertEqual(self.payment(id,key='after-delete')[0],400)
         self.assertEqual(self.request('/api/approve',{'id':id},self.admin)[0],409)
@@ -182,7 +182,7 @@ class ArtecTests(unittest.TestCase):
     def test_all_types_and_tasks(self):
         a={t:[{'worker_id':1,'percent':100}] for t in app.TASKS}
         for i,kind in enumerate(app.TYPES):
-            r=self.request('/api/elevators',{'client_id':self.client,'reference':f'PR{i:04d}','type':kind,'registered_on':'2026-10-26','assignments':a},self.admin)
+            r=self.request('/api/elevators',{'client_id':self.client,'reference':f'PR-{i:04d}','type':kind,'registered_on':'2026-10-26','assignments':a},self.admin)
             self.assertEqual(r[0],200); self.assertEqual(self.approve(r[1]['id'])[0],200)
         self.assertTrue(all(e['calculation']['total_cents']==70700 for e in self.state()['elevators']))
 

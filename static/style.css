@@ -10,3 +10,5 @@ input[type=number]{appearance:textfield;-moz-appearance:textfield}input[type=num
 
 /* Yellow actions retain readable dark text on hover and keyboard focus. */
 button:hover,.button:hover{filter:brightness(.96)}nav button:not(.active):hover{background:#3b3b3b;filter:none}.danger:hover{filter:brightness(.96)}
+
+.sidebar-brand img{width:80%;max-width:156px;margin-inline:auto}.login-logo{display:block;width:100%;max-width:350px;height:auto}@media(max-width:760px){.sidebar-brand img{max-width:140px}.login-logo{max-width:280px}}

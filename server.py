@@ -178,7 +178,7 @@ def mutate(db,u,path,b):
     if path=='/api/elevators':
         permission(u,'administrador','supervisor'); client=row(db,'clients',b.get('client_id')); ref=txt(b.get('reference'),'Referencia',100); kind=b.get('type'); need(kind in TYPES,'Tipo inválido.')
         old_reference=row(db,'elevators',b['id'])['reference'] if b.get('id') else None
-        need(re.fullmatch(r'PR[0-9]{4}',ref) is not None or ref==old_reference,'La referencia debe ser PR seguida de 4 cifras, por ejemplo PR0123.')
+        need(re.fullmatch(r'PR-[0-9]{4}',ref) is not None or ref==old_reference,'La referencia debe ser PR- seguida de 4 cifras, por ejemplo PR-0123.')
         registered=valid_date(b.get('registered_on')); assignments=validate_assignments(db,b.get('assignments')); before=None
         if b.get('id'):
             before=row(db,'elevators',b['id']); need(before['status']=='borrador','Una liquidación aprobada no se puede modificar.',409)
